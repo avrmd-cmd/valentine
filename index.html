@@ -23,7 +23,7 @@
   .overlay {
     position: fixed;
     inset: 0;
-    background: url("https://i.pinimg.com/originals/89/3c/d9/893cd9242f70a07540ecdce15eea176d.gif");
+    background: url("https://i.pinimg.com/originals/d3/6e/57/d36e573bf7c5317f3c3537ad5b908a8b.gif");
     background-size: cover;
     opacity: 0.25;
     pointer-events: none;
@@ -51,7 +51,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background-color: #f08080;
+    background-color: #87CEFA; /* light blue */
     color: white;
     transition: all 0.3s ease;
   }
@@ -65,7 +65,7 @@
     position: fixed;
     width: 14px;
     height: 14px;
-    background: pink;
+    background: #87CEFA; /* blue hearts */
     transform: rotate(45deg);
     pointer-events: none;
     animation: fade 1s linear forwards;
@@ -78,7 +78,7 @@
     position: absolute;
     width: 14px;
     height: 14px;
-    background: pink;
+    background: #87CEFA; /* blue hearts */
     border-radius: 50%;
   }
   .heart::before { top: -7px; left: 0; }
@@ -107,7 +107,7 @@
   .are-you-sure {
     position: fixed;
     font-size: 20px;
-    color: #f08080;
+    color: #87CEFA; /* match button color */
     opacity: 0.8;
     animation: fadeOut 2s forwards;
     z-index: 5;
@@ -124,9 +124,8 @@
 
 <body>
 
-<!-- BACKGROUND MUSIC -->
 <audio id="bg-music" autoplay loop muted>
-  <source src="Isaac Moore - It Might Be You - Instrumental.mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/avrmd-cmd/valentine/refs/heads/main/bg-music.mp3" type="audio/mpeg">
 </audio>
 
 <div class="overlay"></div>
@@ -150,10 +149,34 @@
 
   let scale = 1;
 
-  document.addEventListener("click", () => {
+  music.play().catch(() => {
+    console.log("Autoplay blocked, will start on interaction");
+  });
+
+  function fadeInMusic(duration = 3000, targetVolume = 0.35) {
+    music.volume = 0;
     music.muted = false;
-    music.volume = 0.35;
-  }, { once: true });
+    music.play();
+    const stepTime = 50; // ms
+    const steps = duration / stepTime;
+    const increment = targetVolume / steps;
+    let currentStep = 0;
+
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      music.volume = Math.min(music.volume + increment, targetVolume);
+      if (currentStep >= steps) clearInterval(fadeInterval);
+    }, stepTime);
+  }
+
+  function startMusic() {
+    fadeInMusic();
+    document.removeEventListener("click", startMusic);
+    document.removeEventListener("touchstart", startMusic);
+  }
+
+  document.addEventListener("click", startMusic);
+  document.addEventListener("touchstart", startMusic);
 
   noBtn.addEventListener("click", () => {
     scale += 0.4;
@@ -191,6 +214,10 @@
           src="https://i.pinimg.com/originals/19/80/6e/19806e91932e6054965fc83b85241270.gif">
       </div>
     `;
+
+    const overlay = document.createElement("div");
+    overlay.className = "overlay";
+    document.body.appendChild(overlay);
   });
 
   document.addEventListener("mousemove", createHeart);
