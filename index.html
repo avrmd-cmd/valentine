@@ -120,7 +120,7 @@
 
 <body>
 
-<audio id="bg-music" loop>
+<audio id="bg-music" loop preload="auto">
   <source src="bg-music.mp3" type="audio/mpeg">
 </audio>
 
@@ -160,52 +160,49 @@ const noBtn = document.getElementById("no");
 const music = document.getElementById("bg-music");
 let scale = 1;
 
-// Music fade-in function
-function fadeInMusic(duration = 3000, targetVolume = 0.35) {
+// Music function with volume ramp
+function playAndFadeIn() {
   music.volume = 0;
-  // Crucial: play() must be triggered by a click
-  music.play().catch(e => console.error("Playback failed:", e));
-  
-  const stepTime = 50;
-  const steps = duration / stepTime;
-  const increment = targetVolume / steps;
-  let currentStep = 0;
-
-  const fadeInterval = setInterval(() => {
-    currentStep++;
-    music.volume = Math.min(music.volume + increment, targetVolume);
-    if(currentStep >= steps) clearInterval(fadeInterval);
-  }, stepTime);
+  music.play().then(() => {
+    let vol = 0;
+    const interval = setInterval(() => {
+      if (vol < 0.4) {
+        vol += 0.05;
+        music.volume = vol;
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+  }).catch(err => console.log("Audio waiting for interaction..."));
 }
 
 // CLICK ME → Invitation
 screen1.addEventListener("click", () => {
   screen1.style.display = "none";
   screen2.style.display = "flex";
-  // The interaction happened, so sound is allowed now
-  fadeInMusic();
+  playAndFadeIn(); // Triggers music on the first click
 });
 
-// NO button logic
+// NO button
 noBtn.addEventListener("click", () => {
   scale += 0.4;
   yesBtn.style.transform = `scale(${scale})`;
 
-  for(let i=0; i<4; i++){
+  for(let i=0;i<4;i++){
     const text = document.createElement("div");
     text.className = "are-you-sure";
     text.innerText = "Are you sure?";
     text.style.left = Math.random()*window.innerWidth + "px";
     text.style.top = Math.random()*window.innerHeight + "px";
     document.body.appendChild(text);
-    setTimeout(()=>text.remove(), 2000);
+    setTimeout(()=>text.remove(),2000);
   }
 
-  if(scale >= 4){
-    noBtn.style.display = "none";
-    yesBtn.style.width = "100vw";
-    yesBtn.style.height = "100vh";
-    yesBtn.style.fontSize = "48px";
+  if(scale>=4){
+    noBtn.style.display="none";
+    yesBtn.style.width="100vw";
+    yesBtn.style.height="100vh";
+    yesBtn.style.fontSize="48px";
   }
 });
 
@@ -217,18 +214,18 @@ yesBtn.addEventListener("click", () => {
 
 // Cursor hearts
 document.addEventListener("mousemove", createHeart);
-document.addEventListener("touchmove", e => {
+document.addEventListener("touchmove", e=>{
   const touch = e.touches[0];
-  createHeart({clientX: touch.clientX, clientY: touch.clientY});
+  createHeart({clientX:touch.clientX, clientY:touch.clientY});
 });
 
 function createHeart(e){
   const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.style.left = e.clientX + "px";
-  heart.style.top = e.clientY + "px";
+  heart.className="heart";
+  heart.style.left=e.clientX+"px";
+  heart.style.top=e.clientY+"px";
   document.body.appendChild(heart);
-  setTimeout(()=>heart.remove(), 1000);
+  setTimeout(()=>heart.remove(),1000);
 }
 </script>
 
