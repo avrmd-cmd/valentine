@@ -14,6 +14,10 @@
     overflow: hidden;
     cursor: pointer;
     margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .overlay {
@@ -29,6 +33,7 @@
   .content {
     position: relative;
     z-index: 2;
+    text-align: center;
   }
 
   h1, h2 {
@@ -119,6 +124,11 @@
 
 <body>
 
+<!-- BACKGROUND MUSIC -->
+<audio id="bg-music" autoplay loop muted>
+  <source src="Isaac Moore - It Might Be You - Instrumental.mp3" type="audio/mpeg">
+</audio>
+
 <div class="overlay"></div>
 
 <div class="content">
@@ -133,29 +143,17 @@
   <div id="bottom-text">February 14, 2026</div>
 </div>
 
-<iframe
-  id="ytplayer"
-  style="display:none"
-  src="https://www.youtube.com/embed/5_bDH3xQ0-c?autoplay=0&loop=1&playlist=5_bDH3xQ0-c&controls=0"
-  allow="autoplay">
-</iframe>
-
 <script>
   const yesBtn = document.getElementById("yes");
   const noBtn = document.getElementById("no");
-  const yt = document.getElementById("ytplayer");
+  const music = document.getElementById("bg-music");
 
   let scale = 1;
-  let started = false;
 
-  function startYT() {
-    if (!started) {
-      yt.src = yt.src.replace("autoplay=0", "autoplay=1");
-      started = true;
-    }
-  }
-
-  document.addEventListener("click", startYT);
+  document.addEventListener("click", () => {
+    music.muted = false;
+    music.volume = 0.35;
+  }, { once: true });
 
   noBtn.addEventListener("click", () => {
     scale += 0.4;
@@ -187,8 +185,8 @@
         src="https://i.pinimg.com/originals/b1/58/f4/b158f4cc0584572b4cdab742ef9bf7c0.gif">
 
       <div class="content">
-        <h2>Yaaaay !! See you soon hehehe I love you!</h2>
-        <h3>See you soon hehehe. I love you!</h3>
+        <h2>Yaaaay !! See you soon hehehe. </h2>
+        <h3>I love you!</h3>
         <img class="final-bottom"
           src="https://i.pinimg.com/originals/19/80/6e/19806e91932e6054965fc83b85241270.gif">
       </div>
